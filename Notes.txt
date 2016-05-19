@@ -1,0 +1,88 @@
+~~~~~~~~~~~~~~~~~~~~~~TODO LIST~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Find out what from LogFormatter toBeLogged needs to be added 
+- Create a flowchart of how the .py files interact
+
+- Generate code progression analysis
+	- Graphical code % similarity
+	- How often a block was added/removed
+
+- "JUST" join all code data and organize into user/IP-associated logs
+
+~~~~~~~~~~~~~~~~~~~~~~~Q & A~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+How to extract from log files?
+	python LogProcessor.py [C:/Users/Poxoti/Desktop/Dropbox/PencilCodeDataWork/Feb2015Data/access.log-* or w/e]
+
+How are user/anonymous sessions created?
+	    sessionSets = SessionExtractor.extractSessionSets(logEntries) - LogProcessor(52)
+	->	userSessions, anonymousSessions = UserSessionExtractor.extractUserSessions(sessionSets) - LogProcessor(57)
+	~Then sent to BlockAnalyzer to calculate block data
+	->	totalCount, typeCounts, userCounts = BlockAnalyzer.calculateBlocksBySession(userSessions, anonymousSessions) - LogProcessor(62)
+
+How are SessionSets (sessions.json) organized?
+	[IPADDRESS, USER, [ TRUNCATED_LOG_ENTRY* ]]
+
+How does extractUserSessions work?
+	This function will load a list of session log sets, and return a dictionary of user session data.
+	Sessions are associated definitively with a user by identifying a "save" action which requires
+	authentication. Sessions that do not contain a "save" action are not associated with a user, but
+	instead are added to a list of anonymous sessions (as identity cannot be confirmed.)
+	
+	# Returns two sessions with { (username : [ TRUNCATED_SESSION_ENTRY* ])* }
+		# First has sessions with a username  
+
+How to load JSON files into [ IPADDRESS, USER, [ TRUNCATED_LOG_ENTRY* ] ]?
+	EtFile.loadJsonFile(sessionPath)
+
+How to count number of actions in a user's session?
+	# From a session list
+		session[x][2] = list of actions as [TIME_IN_MS, DOCUMENT, QUERY_STRING, { QUERY_KV_PAIR* }]
+
+Which "users" are actually html requests?
+	activity 	- activities directory
+	guide		- guides directory
+	wps			- not sure, projects?
+	frame		- sometimes contains code data, might need to join by IP 
+	promo		- home screen promo assets directory
+	csp			- Comp Sci Principles page directory
+	reference	- Pencil Code code reference directory
+	monitor		- No idea, find out (sometimes contains code data, not sure how meaningful)
+	drop		- No idea, ignoring for now
+	event		- might be useful for website interface, useless for me
+	share		- don't think useful
+	book		- seems useless
+	drop		- hard to tell if useful
+	projects	- doesn't seem useful
+	
+How is userData organized?
+	[datum][ip, user, [truncated data] ]
+		- Remember: IPs are uniquely grouped
+		
+What are interesting status codes?
+	
+
+How are the log files organized?
+	'IPADDRESS, USER, UID, [DD/Mmm/YYYY:HH:MM:SS +####], "REQUEST", STATUS, SIZE, REFERRER, BROWSER'
+		
+~~~~~~~~~~~~~~~~~~~~~~Program Ideas~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Determine if we can track code progression between language (blocks -> text) toggling
+	- Use timestamps to chronologize actions
+	- Remember to group by projects & activities (from gym)
+	- Remember to join user data over days
+	- Need to sanitize from '/save/'
+	- Might need to use recursion for isolating code data
+		- /log/ (, /load/, /save/)
+		- filter from datum[2][x][1]
+		- user_charli[0][2][0][1]
+	
+# Determine if user_'guide' is ever interacted with outside of the '/home/' page	
+	
+~~~~~~~~~~~~~~~~~~~~~~Current Errors~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~Sandbox~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
