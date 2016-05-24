@@ -63,18 +63,22 @@ def analyzeUser(user, userCode, userBlocks):
 	userFile.write("\nCode Analysis\n")
 	
 	
-	# Session elapsed time variables
-#	timeElapsed	-	time elapsed between code saves	
-	timeElapsed = []
-#	blockElapsed	-	time elapsed while in block mode
+# Session elapsed time variables
+	#	(int) time elapsed between code saves	
+	timeElapsed = 0
+	#	(int) time elapsed while in block mode
 	blockElapsed = 0
-#	textElapsed		-	time elapsed while in text mode
+	#	(int) time elapsed while in text mode
 	textElapsed = 0
-	
-	totalElapsed = 0
-	
+	#	(list) mode,duration event-pairs during session
+	#		pairs are structured as [ mode(string) , duration(int)]
+	modeEvents = []
+	#	mode start time
+	startMode = 0
+
+	totalElapsed = 0	
 	modeChanges = 0
-	sessionNumber = 2
+	sessionNumber = 1
 	
 	# First-case initializations
 	previousMode = userCode[0][0]
@@ -105,11 +109,15 @@ def analyzeUser(user, userCode, userBlocks):
 			# Sessions are separated by hour-long timestamp differences
 			if timeElapsed > 3600:
 				userFile.write("\n***************** Session Summary *****************")
+				
+				for pair in modeEvents:
+					userFile.write( pair[0] + "({}) ".format(pair[1]) )
+				
 				userFile.write("\nTotal session time: {} seconds".format(totalElapsed))
 				userFile.write("\nBlock mode time: {} seconds".format(blockElapsed))
 				userFile.write("\nText mode time: {} seconds".format(textElapsed))
-				userFile.write("\n\n~~~~~~~~~~~~~~~~~ Session {} ~~~~~~~~~~~~~~~~~".format(sessionNumber))
 				sessionNumber += 1
+				userFile.write("\n\n~~~~~~~~~~~~~~~~~ Session {} ~~~~~~~~~~~~~~~~~".format(sessionNumber))
 				#	Reset elapsed time variables for previous session
 				blockElapsed = 0
 				textElapsed = 0
@@ -118,9 +126,13 @@ def analyzeUser(user, userCode, userBlocks):
 			totalElapsed += timeElapsed
 			# If mode has changed, attribute elapsed time to previous mode
 			if hasModeChanged == 'b':
+				modeEvents.append( ['t' , totalElapsed - startMode] )
 				textElapsed += timeElapsed
+				startMode = totalElapsed
 			elif hasModeChanged == 't':
+				modeEvents.append( ['b' , totalElapsed - startMode] )
 				blockElapsed += timeElapsed
+				startMode = totalElapsed5
 			# Else, attribute elapsed time to current mode
 			elif currentMode == 'b':
 				blockElapsed += timeElapsed
@@ -147,14 +159,18 @@ def analyzeUser(user, userCode, userBlocks):
 				userFile.write("\n" + unicode(line).encode('utf-8'))
 			
 	userFile.write("\n\n***************** Session Summary *****************")
+	
+		for pair in modeEvents:
+			userFile.write( pair[0] + "({}) ".format(pair[1]) )
+				
 	userFile.write("\nTotal session time: {} seconds".format(totalElapsed))
 	userFile.write("\nBlock mode time: {} seconds".format(blockElapsed))
 	userFile.write("\nText mode time: {} seconds".format(textElapsed))
 	
 	userFile.write("\n\nTotal mode changes: " + str(modeChanges))
-	userFile.write("\nTotal sessions: " + str(sessionNumber - 1))
+	userFile.write("\nTotal sessions: " + str(sessionNumber))
 	
-	userFile.close()	
+	userFile.close()
 	
 # Converts TIME_IN_MS timestamp from a log entry to a HH:MM:SS representation
 def secondsToTime(timestamp):
