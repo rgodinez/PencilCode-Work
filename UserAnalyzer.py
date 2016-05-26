@@ -110,8 +110,12 @@ def analyzeUser(user, userCode, userBlocks):
 			if timeElapsed > 3600:
 				userFile.write("\n***************** Session Summary *****************")
 				
-				for pair in modeEvents:
-					userFile.write( pair[0] + "({}) ".format(pair[1]) )
+				if not modeEvents:
+					userFile.write( "\n" + currentMode + "({})".format(totalElapsed) )
+				else:
+					userFile.write("\n")
+					for pair in modeEvents:
+						userFile.write( pair[0] + "({}) ".format(pair[1]) )
 				
 				userFile.write("\nTotal session time: {} seconds".format(totalElapsed))
 				userFile.write("\nBlock mode time: {} seconds".format(blockElapsed))
@@ -132,7 +136,7 @@ def analyzeUser(user, userCode, userBlocks):
 			elif hasModeChanged == 't':
 				modeEvents.append( ['b' , totalElapsed - startMode] )
 				blockElapsed += timeElapsed
-				startMode = totalElapsed5
+				startMode = totalElapsed
 			# Else, attribute elapsed time to current mode
 			elif currentMode == 'b':
 				blockElapsed += timeElapsed
@@ -160,8 +164,8 @@ def analyzeUser(user, userCode, userBlocks):
 			
 	userFile.write("\n\n***************** Session Summary *****************")
 	
-		for pair in modeEvents:
-			userFile.write( pair[0] + "({}) ".format(pair[1]) )
+	for pair in modeEvents:
+		userFile.write( pair[0] + "({}) ".format(pair[1]) )
 				
 	userFile.write("\nTotal session time: {} seconds".format(totalElapsed))
 	userFile.write("\nBlock mode time: {} seconds".format(blockElapsed))
