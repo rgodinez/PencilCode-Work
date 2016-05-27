@@ -2,15 +2,21 @@ import os
 import sys
 import difflib
 
+fileName = ""
 
 def safe_str(obj):
-    ##return the byte string representation of obj
+    #return the byte string representation of obj
     try:
         return str(obj)
     except UnicodeEncodeError:
         # obj is unicode
         return unicode(obj).encode('unicode_escape')
 
+#	Utility function for file writing across functions		
+def writeToFile(string):
+	with open(fileName, "w") as f:
+		f.write(string)
+	
 # Returns difference strings 	
 def codeDifference(previousCode, currentCode):
 	
@@ -49,9 +55,15 @@ def codeDifference(previousCode, currentCode):
 					# else:
 						# userBlocks[blockKey] = 1
 				# elif line[0] == ' ':
-						
-def analyzeUser(user, userCode, userBlocks):
+
+##	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~				
+def analyzeSession(sessionNumber, sessionCode):
 	
+	
+##	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~CURRENTLY WORKING ON THIS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+def analyzeUser(user, userCode, userBlocks):
+	global fileName
+	fileName = "User_" + user + ".txt"
 	userFile = open("User_" + user + ".txt", "w")
 	
 	userFile.write("Analysis data for:\t" + user + "\n\n")
@@ -61,7 +73,6 @@ def analyzeUser(user, userCode, userBlocks):
 		userFile.write("\t{}:\t{}\n".format(block, userBlocks[block]))
 	
 	userFile.write("\nCode Analysis\n")
-	
 	
 # Session elapsed time variables
 	#	(int) time elapsed between code saves	
@@ -91,8 +102,8 @@ def analyzeUser(user, userCode, userBlocks):
 		currentMode = entry[0]
 		currentTime = entry[1]
 		
-		# If mode has not changed, stays null-string
-		#	else, change string to mode that the user has changed to
+		"""	(string) null-string = no mode change
+				otherwise, should be 't' or 'b' to designate what mode it has changed to	"""
 		hasModeChanged = ''
 		
 		if currentMode != previousMode:
@@ -110,6 +121,7 @@ def analyzeUser(user, userCode, userBlocks):
 			if timeElapsed > 3600:
 				userFile.write("\n***************** Session Summary *****************")
 				
+				# modeEvents should be false if there has only been one
 				if not modeEvents:
 					userFile.write( "\n" + currentMode + "({})".format(totalElapsed) )
 				else:
@@ -128,7 +140,7 @@ def analyzeUser(user, userCode, userBlocks):
 				totalElapsed = 0
 				
 			totalElapsed += timeElapsed
-			# If mode has changed, attribute elapsed time to previous mode
+			# If mode has changed, add elapsed time to previous mode
 			if hasModeChanged == 'b':
 				modeEvents.append( ['t' , totalElapsed - startMode] )
 				textElapsed += timeElapsed
@@ -137,7 +149,7 @@ def analyzeUser(user, userCode, userBlocks):
 				modeEvents.append( ['b' , totalElapsed - startMode] )
 				blockElapsed += timeElapsed
 				startMode = totalElapsed
-			# Else, attribute elapsed time to current mode
+			# Else, add elapsed time to current mode
 			elif currentMode == 'b':
 				blockElapsed += timeElapsed
 			elif currentMode == 't':

@@ -104,7 +104,6 @@ def joinUserByIP(userData, anonymousData):
 			
 	return joinedData		
 
-#	* TO DO * IMPORTANT *
 def writeUserDataFile(sessionData, user):
 	
 	userData = getUserData(sessionData, user)
@@ -120,12 +119,12 @@ def writeDataFile(sessionData):
 	
 	print "Generating unique users..."
 	userList = getUsers(sessionData)
-	filesWritten = 0
+	filesWrittenCount = 0
 	
 	for user in userList:
-		filesWritten += writeUserDataFile(sessionData, user)
+		filesWrittenCount += writeUserDataFile(sessionData, user)
 	
-	print("{} users logged".format(filesWritten))
+	print("{} users logged".format(filesWrittenCount))
 	
 def main():
 	print "Loading session data..."
