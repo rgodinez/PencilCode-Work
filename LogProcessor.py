@@ -1,3 +1,4 @@
+import os
 import sys
 import argparse
 
@@ -26,7 +27,7 @@ def parseArguments():
     args = parser.parse_args()
     if args.debug:  isDebugging = True
     if args.path: logPath = args.path
-
+	
     # Path required as parameter
     if not logPath:
         print "Error: no path specified!"
@@ -39,10 +40,20 @@ def parseArguments():
         print
         
     return logPath
-
+	
+def easy_log_path():
+	logPath = os.getcwd()
+	logPath += '\\logfiles'
+	
+	return logPath
+	
 def main():
-    logPath = parseArguments()    
-    logEntries, errorEntries = LogFormatter.formatFromPath("C:/Users/admin/Desktop/Dropbox/PencilCodeDataWork/Feb2015Data/access.log-20150219") # logPath
+    ##logPath = parseArguments()
+	
+	# For testing purposes, using easy_log_path to quickly get path for log folder in the same directory as source files
+    logPath = easy_log_path()
+	
+    logEntries, errorEntries = LogFormatter.formatFromPath(logPath) # logPath
     print "Completed log loading: " + str(len(logEntries)) + " entries total."
     EtFile.saveJsonFile("errors.json", errorEntries)
     print "Error entries saved."

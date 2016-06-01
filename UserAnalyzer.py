@@ -57,8 +57,8 @@ def codeDifference(previousCode, currentCode):
 				# elif line[0] == ' ':
 
 ##	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~				
-def analyzeSession(sessionNumber, sessionCode):
-	
+#def analyzeSession(sessionNumber, sessionCode):
+
 	
 ##	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~CURRENTLY WORKING ON THIS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 def analyzeUser(user, userCode, userBlocks):

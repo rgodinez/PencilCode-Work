@@ -105,7 +105,7 @@ def calculateBlocksBySession(userSessions, anonymousSessions):
     for user, counts in userCounts.items():
         userCounts[user] = [counts[0], float(counts[0]) / totalCount, counts[1], counts[2]]
 
-        for blockType, blockCount in [1].items():
+        for blockType, blockCount in counts[1].items():
             if blockType in typeCounts.keys():
                 typeCounts[blockType] += blockCount[0]
             else:

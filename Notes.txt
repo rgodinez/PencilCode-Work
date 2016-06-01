@@ -11,6 +11,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~Q & A~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 How to extract from log files?
 	python LogProcessor.py [C:/Users/Poxoti/Desktop/Dropbox/PencilCodeDataWork/Feb2015Data/access.log-* or w/e]
+	#	this will also automatically unzip gzipped log files and add that data to the set
 
 How are user/anonymous sessions created?
 	    sessionSets = SessionExtractor.extractSessionSets(logEntries) - LogProcessor(52)
