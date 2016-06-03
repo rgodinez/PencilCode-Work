@@ -98,6 +98,14 @@ def analyzeUser(user, userCode, userBlocks):
 	
 	userFile.write("\n~~~~~~~~~~~~~~~~~ Session 1 ~~~~~~~~~~~~~~~~~")
 	
+	userFile.write("\n\n~~~~~~~~~~~~~~~~~ ")
+	userFile.write("Code from " + str(secondsToTime(previousTime)) + "\tMode: " + previousMode)
+	userFile.write(" ~~~~~~~~~~~~~~~~~")
+	
+	for line in previousCode:
+		## TODO: need a better fix than unicode().encode('utf-8')
+		userFile.write("\n" + unicode(line).encode('utf-8'))
+		
 	for entry in userCode:
 		currentMode = entry[0]
 		currentTime = entry[1]
@@ -157,7 +165,7 @@ def analyzeUser(user, userCode, userBlocks):
 			
 			difference = codeDifference(previousCode, entry[2])
 			##TODO: change to have differences adjacent to previous(current) code: maybe just change \n to \t (and some change)
-			userFile.write("\nDifferences from previous code")
+			userFile.write("\nDifferences between code")
 			userFile.write("\n\n\tTime between changes: " + str(secondsToTime(timeElapsed)))
 			
 			for line in difference:
