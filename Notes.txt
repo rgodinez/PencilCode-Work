@@ -19,9 +19,6 @@ How are user/anonymous sessions created?
 	~Then sent to BlockAnalyzer to calculate block data
 	->	totalCount, typeCounts, userCounts = BlockAnalyzer.calculateBlocksBySession(userSessions, anonymousSessions) - LogProcessor(62)
 
-How are SessionSets (sessions.json) organized?
-	[IPADDRESS, USER, [ TRUNCATED_LOG_ENTRY* ]]
-
 How does extractUserSessions work?
 	This function will load a list of session log sets, and return a dictionary of user session data.
 	Sessions are associated definitively with a user by identifying a "save" action which requires
@@ -75,8 +72,6 @@ How are the log files organized?
 		- /log/ (, /load/, /save/)
 		- filter from datum[2][x][1]
 		- user_charli[0][2][0][1]
-	
-# Determine if user_'guide' is ever interacted with outside of the '/home/' page	
 	
 ~~~~~~~~~~~~~~~~~~~~~~Current Errors~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -8,7 +8,7 @@ import UserAnalyzer
 def getUsers(sessionData):
 	uniqueUsers = []
 	
-	# User strings for general website folder accesses
+	# User strings for general website folder accesses (currently using as ignore list)
 	artificialUsers = ['activity', 'promo', 'guide', 'wps', 'frame', 'event', 'share', 'monitor', 'drop', 'csp', 'reference', 'win']
 
 	for session in sessionData:
@@ -17,7 +17,7 @@ def getUsers(sessionData):
 
 	return uniqueUsers
 	
-# ~~~~~~	DETERMINE FOR DEPRECATION	
+#	Utility function: writes users' name from session into a text file
 def writeUsersToFile(sessionData):
 	userList = getUsers(sessionData)
 
@@ -29,7 +29,7 @@ def writeUsersToFile(sessionData):
 		
 	textFile.close()
 
-# Returns session data that belongs to the passed user	
+# Returns session data that belongs to the passed user
 def getUserData(sessionData, user):
 	data = []
 
