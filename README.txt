@@ -30,3 +30,5 @@ How are SessionSets (sessions.json) organized?
 				[4] holds the HTTP status code
 	
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Users.json~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+How are UserSessions (users.json) organized?
