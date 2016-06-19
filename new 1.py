@@ -1,8 +1,7 @@
 """
 JSON format:
 userX.json
-	"sessionId"
-		~int
+	"sessionId"	:	int
 		"logs"
 			"code"	:	string
 			"mode"	:	string "t" or "b"

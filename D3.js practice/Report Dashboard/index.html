@@ -1,0 +1,214 @@
+<!DOCTYPE HTML>
+<html>
+<meta charset="utf-8">
+
+<style>
+body{
+    width:1060px;
+    margin:50px auto;
+}
+path {  stroke: #fff; }
+path:hover {  opacity:0.9; }
+rect:hover {  fill:blue; }
+.axis {  font: 10px sans-serif; }
+.legend tr{    border-bottom:1px solid grey; }
+.legend tr:first-child{    border-top:1px solid grey; }
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {  display: none; }
+.legend{
+    margin-bottom:76px;
+    display:inline-block;
+    border-collapse: collapse;
+    border-spacing: 0px;
+}
+.legend td{
+    padding:4px 5px;
+    vertical-align:bottom;
+}
+.legendFreq, .legendPerc{
+    align:right;
+    width:50px;
+}
+
+</style>
+
+<body>
+<div id="dashboard"></div>
+
+<script src="d3.min.js"></script>
+
+<script>
+function dashboard(id, fData)
+{
+	var barColor = 'steelblue';
+	//function segColor(c) {return {c1: "#color", c2: "#color", etc. }[c]; }
+	
+	//compute total lines for each log
+	fData.forEach( function(d){ d.lineCount = 0; d3.entries(d.blocks).forEach( function(b){d.lineCount+=b.value})} );
+	
+	//Render histogram
+	function histoGram(fD)
+	{
+		var hG={},	hGDim = {t: 60, r: 0, b: 30, l:0};
+		hGDim.w = 500 - hGDim.l - hGDim.r, 
+        hGDim.h = 300 - hGDim.t - hGDim.b;
+		
+		//Create SVG for histogram
+		var hGsvg = d3.select(id).append("svg")
+			.attr("width", hGDim.w + hGDim.l + hGDim.r)
+            .attr("height", hGDim.h + hGDim.t + hGDim.b).append("g")
+            .attr("transform", "translate(" + hGDim.l + "," + hGDim.t + ")");
+			
+		//x-axis mapping function
+		var x = d3.scale.ordinal().rangeRoundBands([0, hGDim.w], 0.1)
+                .domain(fD.map(function(d) { return d[0]; }));
+				
+		// Add x-axis to the svg
+        hGsvg.append("g").attr("class", "x axis")
+            .attr("transform", "translate(0," + hGDim.h + ")")
+            .call(d3.svg.axis().scale(x).orient("bottom"));
+			
+		// Create function for y-axis map.
+        var y = d3.scale.linear().range([hGDim.h, 0])
+                .domain([0, d3.max(fD, function(d) { return d[1]; })]);
+
+        // Create bars for histogram to contain rectangles and freq labels.
+        var bars = hGsvg.selectAll(".bar").data(fD).enter()
+                .append("g").attr("class", "bar");
+        
+        //create the rectangles.
+        bars.append("rect")
+            .attr("x", function(d) { return x(d[0]); })
+            .attr("y", function(d) { return y(d[1]); })
+            .attr("width", x.rangeBand())
+            .attr("height", function(d) { return hGDim.h - y(d[1]); })
+            .attr('fill',barColor);
+            
+        //Create the frequency labels above the rectangles.
+        bars.append("text").text(function(d){ return d3.format(",")(d[1])})
+            .attr("x", function(d) { return x(d[0])+x.rangeBand()/2; })
+            .attr("y", function(d) { return y(d[1])-5; })
+            .attr("text-anchor", "middle");
+		
+		function mouseover(d){  // utility function to be called on mouseover.
+            // filter for selected state.
+            var st = fData.filter(function(s){ return s.time == d[0];})[0],
+                nD = d3.keys(st.blocks).map(function(b){ return {type:b, count:st.blocks[b]};});
+				//TODO: need to figure out how I need to format nD
+               
+            // call update functions of pie-chart and legend.    
+            pC.update(nD);
+        }
+		
+		return hG;
+	}
+	
+	//Render pie chart
+	function pieChart(pD)
+	{
+		var pC={},	pieDim={w:250, h:250};
+		pieDim.r = Math.min(pieDim.w, pieDim.h) / 2;
+		
+		//Create SVG for pie chart
+		var piesvg = d3.select(id).append("svg")
+            .attr("width", pieDim.w).attr("height", pieDim.h).append("g")
+            .attr("transform", "translate("+pieDim.w/2+","+pieDim.h/2+")");
+			
+		// create function to draw the arcs of the pie slices.
+        var arc = d3.svg.arc().outerRadius(pieDim.r - 10).innerRadius(0);
+
+        // create a function to compute the pie slice angles.
+        var pie = d3.layout.pie().sort(null).value(function(d) { return d.blocks; });
+
+        // Draw the pie slices.
+        piesvg.selectAll("path").data(pie(pD)).enter().append("path").attr("d", arc)
+            .each(function(d) { this._current = d; })
+            .style("fill", function(d) { return segColor(d.data.type); })
+            .on("mouseover",mouseover).on("mouseout",mouseout);
+
+        // create function to update pie-chart. This will be used by histogram.
+        pC.update = function(nD){
+            piesvg.selectAll("path").data(pie(nD)).transition().duration(500)
+                .attrTween("d", arcTween);
+        }        
+        // Animating the pie-slice requiring a custom function which specifies
+        // how the intermediate paths should be drawn.
+        function arcTween(a) {
+            var i = d3.interpolate(this._current, a);
+            this._current = i(0);
+            return function(t) { return arc(i(t));    };
+        }    
+        return pC;
+	}
+	
+	//map histogram data
+	var logData = fData.map( function(d){ return [d.time, d.lineCount]; } );
+	
+	var hG = histoGram(logData)
+	
+}
+</script>
+
+<script>	//Data
+var data=[
+{SessionId: 1, 
+	logs:
+	[
+		{
+			code: "speed 2|pen red|for [1..25]|fd 100|rt 88",
+			mode: "b",
+			time: 462631214,
+			blocks: 
+			{
+				"speed": 1,
+				"pen": 1,
+				"for": 1,
+				"fd": 1,
+				"rt": 1
+			},
+			differences:
+			{
+				code: "",
+				time: 0
+			}
+		},
+		{
+			code: "speed 2|pen red|speed Infinity|for [1..100]|fd 100|rt 88",
+			mode: "b",
+			time: 462631230,
+			blocks: 
+			{
+				"speed": 2,
+				"pen": 1,
+				"for": 1,
+				"fd": 1,
+				"rt": 1
+			},
+			differences:
+			{
+				code: "||+|?",
+				time: 0
+			}
+		}
+	],
+	times:
+	{
+		blockTotal:	16,
+		textTotal:	0,
+		total:		16
+	},
+}
+];
+
+dashboard('#dashboard', data[0].logs);
+</script>
+</body>
+
+</html>
