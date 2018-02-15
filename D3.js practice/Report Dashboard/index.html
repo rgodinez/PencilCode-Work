@@ -51,7 +51,15 @@ function dashboard(id, fData)
 	//function segColor(c) {return {c1: "#color", c2: "#color", etc. }[c]; }
 	
 	//compute total lines for each log
-	fData.forEach( function(d){ d.lineCount = 0; d3.entries(d.blocks).forEach( function(b){d.lineCount+=b.value})} );
+	fData.forEach( 
+	function(d){ 
+		d.lineCount = 0; 
+		d3.entries(d.blocks).forEach( 
+			function(b){
+				d.lineCount+=b.value
+			}
+		)
+	} );
 	
 	//Render histogram
 	function histoGram(fD)
@@ -151,7 +159,7 @@ function dashboard(id, fData)
 	//map histogram data
 	var logData = fData.map( function(d){ return [d.time, d.lineCount]; } );
 	
-	var hG = histoGram(logData)
+	var hG = histoGram(logData);
 	
 }
 </script>
